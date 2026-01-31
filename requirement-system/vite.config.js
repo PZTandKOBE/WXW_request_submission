@@ -6,11 +6,27 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // 捕获所有 /check 开头的请求，转发到后端 8080 端口
+      // 1. 业务接口 (保持不变)
       '/check': {
-        target: 'http://localhost:8080', 
+        target: 'http://117.72.16.195:6600',
         changeOrigin: true,
-        // 根据手册，后端真实路径包含 /check，所以这里不需要 rewrite 去掉它
+      },
+      // 2. 登录接口 (保持不变)
+      '/api-auth': {
+        target: 'http://117.72.16.195:6600',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-auth/, '')
+      },
+
+      // 👇👇👇 重点修改这里！👇👇👇
+      // 3. 权限/用户信息接口
+      '/permission': {
+        target: 'http://117.72.16.195:6600', // 目标就是你刚才测试通的地址
+        changeOrigin: true,
+        // ❌ 之前可能写了 rewrite 去掉前缀，现在千万别去掉！
+        // 因为后端真实地址里就包含 /permission
+        // 前端请求: /permission/user/information
+        // 转发后: http://117.72.16.195:6600/permission/user/information (正是你要的地址)
       }
     }
   }

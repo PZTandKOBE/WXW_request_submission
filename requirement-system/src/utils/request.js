@@ -6,15 +6,18 @@ import { ElMessage } from 'element-plus'
 const service = axios.create({
   // 使用环境变量中的 /check
   baseURL: import.meta.env.VITE_API_BASE_URL, 
-  timeout: 10000 
+  timeout: 30000 
 })
 
 // 请求拦截器
+// src/utils/request.js
+
 service.interceptors.request.use(
   (config) => {
     const userStore = useUserStore()
+    // 只要有 Token，且不是登录接口，就加上
+    // 注意：这里去掉了之前可能写的 isLogin 判断，防止误伤
     if (userStore.token) {
-      // 根据手册 2.2 章节，注入 Bearer Token
       config.headers.Authorization = `Bearer ${userStore.token}`
     }
     return config
