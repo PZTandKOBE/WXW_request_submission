@@ -1,11 +1,20 @@
 import request from '../utils/request'
 
-// 获取需求池 (主任务)
+// 获取需求池 (主任务列表)
 export function getMainList(params) {
   return request({
     url: '/api/administrator/get/allMain',
     method: 'get',
-    params // { page, pageSize }
+    params // 包含 page, pageSize
+  })
+}
+
+// 修复：新增根据名称搜索主任务的接口
+export function getMainTaskByName(mainTaskName) {
+  return request({
+    url: '/api/administrator/get/mainTaskByName',
+    method: 'get',
+    params: { mainTaskName }
   })
 }
 
@@ -23,16 +32,25 @@ export function updateMainStatus(mainTaskId, status) {
   return request({
     url: '/api/administrator/update/mainStatus',
     method: 'post',
-    params: { mainTaskId, status } // 注意文档中这两个参数是在 query string 中
+    params: { mainTaskId, status }
   })
 }
 
-// 获取所有干事 (分配任务用)
+// 获取所有干事 (用于下拉筛选或分配任务)
 export function getAllOfficers(departmentId) {
   return request({
     url: '/api/administrator/get/allUser',
     method: 'get',
     params: { departmentId }
+  })
+}
+
+// 根据干事姓名查询主任务
+export function getMainTaskByOfficial(Official) {
+  return request({
+    url: '/api/administrator/get/mainTaskByOfficial',
+    method: 'get',
+    params: { Official }
   })
 }
 
